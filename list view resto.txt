@@ -1,0 +1,518 @@
+menu1 : 
+SELECT
+    `b`.`nm_menu` AS `nm_menu`,
+    `c`.`nm_meja` AS `nm_meja`,
+    `a`.`id_order` AS `id_order`,
+    `a`.`no_order` AS `no_order`,
+    `a`.`id_harga` AS `id_harga`,
+    `a`.`qty` AS `qty`,
+    `a`.`harga` AS `harga`,
+    `a`.`request` AS `request`,
+    `a`.`tambahan` AS `tambahan`,
+    `a`.`page` AS `page`,
+    `a`.`id_meja` AS `id_meja`,
+    `a`.`selesai` AS `selesai`,
+    `a`.`id_lokasi` AS `id_lokasi`,
+    `a`.`pengantar` AS `pengantar`,
+    `a`.`tgl` AS `tgl`,
+    `a`.`admin` AS `admin`,
+    `a`.`void` AS `void`,
+    `a`.`round` AS `round`,
+    `a`.`alasan` AS `alasan`,
+    `a`.`nm_void` AS `nm_void`,
+    `a`.`j_mulai` AS `j_mulai`,
+    `a`.`j_selesai` AS `j_selesai`,
+    `a`.`diskon` AS `diskon`,
+    `a`.`wait` AS `wait`,
+    `a`.`aktif` AS `aktif`,
+    `a`.`id_koki1` AS `id_koki1`,
+    `a`.`id_koki2` AS `id_koki2`,
+    `a`.`id_koki3` AS `id_koki3`,
+    `a`.`ongkir` AS `ongkir`,
+    `a`.`id_distribusi` AS `id_distribusi`,
+    `a`.`orang` AS `orang`,
+    `a`.`no_checker` AS `no_checker`,
+    `a`.`print` AS `print`,
+    `a`.`copy_print` AS `copy_print`,
+    `a`.`created_at` AS `created_at`,
+    `a`.`updated_at` AS `updated_at`,
+    TIMESTAMPDIFF(MINUTE, `a`.`j_mulai`, `a`.`wait`) AS `selisih`
+FROM
+    (
+        (
+            `resto`.`tb_order` `a`
+        LEFT JOIN `resto`.`view_menu` `b`
+        ON
+            (`b`.`id_harga` = `a`.`id_harga`)
+        )
+    LEFT JOIN `resto`.`tb_meja` `c`
+    ON
+        (`c`.`id_meja` = `a`.`id_meja`)
+    )
+WHERE
+    `a`.`selesai` <> 'selesai' AND `a`.`aktif` = '1' AND `a`.`void` = 0
+ORDER BY
+    `a`.`selesai`
+DESC
+    
+
+menu2:
+SELECT
+    `b`.`nm_menu` AS `nm_menu`,
+    `c`.`nm_meja` AS `nm_meja`,
+    `a`.`id_order` AS `id_order`,
+    `a`.`no_order` AS `no_order`,
+    `a`.`id_harga` AS `id_harga`,
+    `a`.`qty` AS `qty`,
+    `a`.`harga` AS `harga`,
+    `a`.`request` AS `request`,
+    `a`.`tambahan` AS `tambahan`,
+    `a`.`page` AS `page`,
+    `a`.`id_meja` AS `id_meja`,
+    `a`.`selesai` AS `selesai`,
+    `a`.`id_lokasi` AS `id_lokasi`,
+    `a`.`pengantar` AS `pengantar`,
+    `a`.`tgl` AS `tgl`,
+    `a`.`admin` AS `admin`,
+    `a`.`void` AS `void`,
+    `a`.`round` AS `round`,
+    `a`.`alasan` AS `alasan`,
+    `a`.`nm_void` AS `nm_void`,
+    `a`.`j_mulai` AS `j_mulai`,
+    `a`.`j_selesai` AS `j_selesai`,
+    `a`.`diskon` AS `diskon`,
+    `a`.`wait` AS `wait`,
+    `a`.`aktif` AS `aktif`,
+    `a`.`id_koki1` AS `id_koki1`,
+    `a`.`id_koki2` AS `id_koki2`,
+    `a`.`id_koki3` AS `id_koki3`,
+    `a`.`ongkir` AS `ongkir`,
+    `a`.`id_distribusi` AS `id_distribusi`,
+    `a`.`orang` AS `orang`,
+    `a`.`no_checker` AS `no_checker`,
+    `a`.`print` AS `print`,
+    `a`.`copy_print` AS `copy_print`,
+    `a`.`created_at` AS `created_at`,
+    `a`.`updated_at` AS `updated_at`,
+    TIMESTAMPDIFF(MINUTE, `a`.`j_mulai`, `a`.`wait`) AS `selisih`
+FROM
+    (
+        (
+            `resto`.`tb_order` `a`
+        LEFT JOIN `resto`.`view_menu` `b`
+        ON
+            (`b`.`id_harga` = `a`.`id_harga`)
+        )
+    LEFT JOIN `resto`.`tb_meja` `c`
+    ON
+        (`c`.`id_meja` = `a`.`id_meja`)
+    )
+WHERE
+    `a`.`selesai` = 'selesai' AND `a`.`aktif` = '1' AND `a`.`void` = 0
+
+view_koki_masak :
+SELECT
+    `resto`.`tb_order`.`id_order` AS `id_order`,
+    `resto`.`tb_order`.`tgl` AS `tgl`,
+    `resto`.`tb_lokasi`.`id_lokasi` AS `id_lokasi`,
+    `resto`.`tb_lokasi`.`nm_lokasi` AS `nm_lokasi`,
+    `resto`.`tb_distribusi`.`nm_distribusi` AS `nm_distribusi`,
+    `resto`.`tb_order`.`no_order` AS `no_order`,
+    `view_menu`.`nm_menu` AS `nm_menu`,
+    `resto`.`tb_order`.`qty` AS `qty`,
+    `a`.`nama` AS `koki1`,
+    `b`.`nama` AS `koki2`,
+    `c`.`nama` AS `koki3`,
+    MINUTE(
+        TIMEDIFF(
+            `resto`.`tb_order`.`j_mulai`,
+            `resto`.`tb_order`.`j_selesai`
+        )
+    ) AS `menit`,
+    MINUTE(
+        TIMEDIFF(
+            `resto`.`tb_order`.`j_mulai`,
+            `resto`.`tb_order`.`j_selesai`
+        )
+    ) / `resto`.`tb_order`.`qty` AS `menit_bagi`
+FROM
+    (
+        (
+            (
+                (
+                    (
+                        (
+                            `resto`.`tb_order`
+                        LEFT JOIN `resto`.`tb_lokasi` ON
+                            (
+                                `resto`.`tb_order`.`id_lokasi` = `resto`.`tb_lokasi`.`id_lokasi`
+                            )
+                        )
+                    LEFT JOIN `resto`.`view_menu` ON
+                        (
+                            `resto`.`tb_order`.`id_harga` = `view_menu`.`id_harga`
+                        )
+                    )
+                LEFT JOIN `resto`.`tb_distribusi` ON
+                    (
+                        `resto`.`tb_order`.`id_distribusi` = `resto`.`tb_distribusi`.`id_distribusi`
+                    )
+                )
+            LEFT JOIN `resto`.`tb_karyawan` `a`
+            ON
+                (
+                    `resto`.`tb_order`.`id_koki1` = `a`.`id_karyawan`
+                )
+            )
+        LEFT JOIN `resto`.`tb_karyawan` `b`
+        ON
+            (
+                `resto`.`tb_order`.`id_koki2` = `b`.`id_karyawan`
+            )
+        )
+    LEFT JOIN `resto`.`tb_karyawan` `c`
+    ON
+        (
+            `resto`.`tb_order`.`id_koki3` = `c`.`id_karyawan`
+        )
+    )
+WHERE
+    `resto`.`tb_order`.`aktif` = 2 AND `resto`.`tb_order`.`void` = 0
+
+
+
+view_menu:
+SELECT
+    `b`.`tipe` AS `tipe`,
+    `a`.`id_harga` AS `id_harga`,
+    `a`.`id_menu` AS `id_menu`,
+    `a`.`id_distribusi` AS `id_distribusi`,
+    `a`.`harga` AS `harga`,
+    `b`.`nm_menu` AS `nm_menu`,
+    `c`.`nm_distribusi` AS `nm_distribusi`,
+    `b`.`image` AS `image`,
+    `b`.`aktif` AS `akv`,
+    `b`.`lokasi` AS `lokasi`,
+    `b`.`id_station` AS `id_station`,
+    `b`.`id_kategori` AS `id_kategori`
+FROM
+    (
+        (
+            `resto`.`tb_harga` `a`
+        LEFT JOIN `resto`.`tb_menu` `b`
+        ON
+            (`a`.`id_menu` = `b`.`id_menu`)
+        )
+    LEFT JOIN `resto`.`tb_distribusi` `c`
+    ON
+        (
+            `a`.`id_distribusi` = `c`.`id_distribusi`
+        )
+    )
+
+
+view_menu2 : 
+SELECT
+    `a`.`id_harga` AS `id_harga`,
+    `a`.`id_menu` AS `id_menu`,
+    `a`.`id_distribusi` AS `id_distribusi`,
+    `a`.`harga` AS `harga`,
+    `b`.`nm_menu` AS `nm_menu`,
+    `c`.`nm_distribusi` AS `nm_distribusi`,
+    `b`.`image` AS `image`,
+    `b`.`aktif` AS `akv`,
+    `b`.`lokasi` AS `lokasi`,
+    `b`.`id_kategori` AS `id_kategori`
+FROM
+    (
+        (
+            `resto`.`tb_harga` `a`
+        LEFT JOIN `resto`.`tb_menu` `b`
+        ON
+            (`a`.`id_menu` = `b`.`id_menu`)
+        )
+    LEFT JOIN `resto`.`tb_distribusi` `c`
+    ON
+        (
+            `a`.`id_distribusi` = `c`.`id_distribusi`
+        )
+    )
+
+
+
+
+view_menu_kategori : 
+SELECT
+    `a`.`id_menu` AS `id_menu`,
+    `a`.`id_harga` AS `id_harga`,
+    `b`.`nm_menu` AS `nm_menu`,
+    `c`.`nm_distribusi` AS `nm_distribusi`,
+    `a`.`harga` AS `harga`,
+    `b`.`image` AS `image`,
+    `a`.`id_distribusi` AS `id_distribusi`,
+    `b`.`lokasi` AS `lokasi`,
+    `b`.`id_kategori` AS `id_kategori`
+FROM
+    (
+        (
+            `resto`.`tb_harga` `a`
+        LEFT JOIN `resto`.`tb_menu` `b`
+        ON
+            (`b`.`id_menu` = `a`.`id_menu`)
+        )
+    LEFT JOIN `resto`.`tb_distribusi` `c`
+    ON
+        (
+            `c`.`id_distribusi` = `a`.`id_distribusi`
+        )
+    )
+GROUP BY
+    `a`.`id_harga`
+
+
+
+view_nilai_masak : 
+SELECT
+    `resto`.`tb_order`.`id_order` AS `id_order`,
+    `resto`.`tb_order`.`tgl` AS `tgl`,
+    `resto`.`tb_order`.`no_order` AS `no_order`,
+    `resto`.`tb_order`.`id_harga` AS `id_harga`,
+    `resto`.`tb_order`.`id_lokasi` AS `id_lokasi`,
+    `resto`.`tb_order`.`id_distribusi` AS `id_distribusi`,
+    `resto`.`tb_order`.`qty` AS `qty`,
+    `resto`.`tb_order`.`id_koki1` AS `id_koki1`,
+    `resto`.`tb_order`.`id_koki2` AS `id_koki2`,
+    `resto`.`tb_order`.`id_koki3` AS `id_koki3`,
+    TIMESTAMPDIFF(
+        MINUTE,
+        `resto`.`tb_order`.`j_mulai`,
+        `resto`.`tb_order`.`j_selesai`
+    ) AS `lama_masak`,
+    IF(
+        `resto`.`tb_order`.`id_koki1` > 0 AND `resto`.`tb_order`.`id_koki2` > 0 AND `resto`.`tb_order`.`id_koki3` > 0,
+        IF(
+            `c`.`tipe` = 'drink',
+            `d`.`point` / 2,
+            `d`.`point`
+        ) / 3,
+        IF(
+            `resto`.`tb_order`.`id_koki1` > 0 AND `resto`.`tb_order`.`id_koki2` > 0,
+            IF(
+                `c`.`tipe` = 'drink',
+                `d`.`point` / 2,
+                `d`.`point`
+            ) / 2,
+            IF(
+                `c`.`tipe` = 'drink',
+                `d`.`point` / 2,
+                `d`.`point`
+            )
+        )
+    ) AS `nilai_koki`,
+    IF(
+        `resto`.`tb_order`.`id_koki1` > 0 AND `resto`.`tb_order`.`id_koki2` > 0 AND `resto`.`tb_order`.`id_koki3` > 0,
+        3,
+        IF(
+            `resto`.`tb_order`.`id_koki1` > 0 AND `resto`.`tb_order`.`id_koki2` > 0,
+            2,
+            1
+        )
+    ) AS `jml_koki`,
+    `c`.`tipe` AS `tipe`,
+    `d`.`point` AS `point`
+FROM
+    (
+        (
+            (
+                `resto`.`tb_order`
+            LEFT JOIN `resto`.`tb_harga` `b`
+            ON
+                (
+                    `b`.`id_harga` = `resto`.`tb_order`.`id_harga`
+                )
+            )
+        LEFT JOIN `resto`.`tb_menu` `c`
+        ON
+            (`c`.`id_menu` = `b`.`id_menu`)
+        )
+    LEFT JOIN `resto`.`tb_handicap` `d`
+    ON
+        (`d`.`id_handicap` = `c`.`id_handicap`)
+    )
+WHERE
+    `resto`.`tb_order`.`void` = 0 AND `resto`.`tb_order`.`aktif` = 2
+
+
+
+
+
+view_nilai_masak2 : 
+SELECT
+    `koki_masak`.`id_order` AS `id_order`,
+    `koki_masak`.`tgl` AS `tgl`,
+    `koki_masak`.`no_order` AS `no_order`,
+    `koki_masak`.`id_harga` AS `id_harga`,
+    `koki_masak`.`id_lokasi` AS `id_lokasi`,
+    `koki_masak`.`id_distribusi` AS `id_distribusi`,
+    `koki_masak`.`qty` AS `qty`,
+    `koki_masak`.`koki` AS `koki`,
+    `koki_masak`.`lama_masak` AS `lama_masak`,
+    `koki_masak`.`nilai_koki` AS `nilai_koki`,
+    `koki_masak`.`jml_koki` AS `jml_koki`,
+    `koki_masak`.`ket` AS `ket`
+FROM
+    (
+    SELECT
+        `view_nilai_masak`.`id_order` AS `id_order`,
+        `view_nilai_masak`.`tgl` AS `tgl`,
+        `view_nilai_masak`.`no_order` AS `no_order`,
+        `view_nilai_masak`.`id_harga` AS `id_harga`,
+        `view_nilai_masak`.`id_lokasi` AS `id_lokasi`,
+        `view_nilai_masak`.`id_distribusi` AS `id_distribusi`,
+        `view_nilai_masak`.`qty` AS `qty`,
+        `view_nilai_masak`.`id_koki1` AS `koki`,
+        `view_nilai_masak`.`lama_masak` AS `lama_masak`,
+        `view_nilai_masak`.`nilai_koki` AS `nilai_koki`,
+        `view_nilai_masak`.`jml_koki` AS `jml_koki`,
+        'koki1' AS `ket`
+    FROM
+        `resto`.`view_nilai_masak`
+    WHERE
+        `view_nilai_masak`.`id_koki1` > 0
+    UNION ALL
+SELECT
+    `view_nilai_masak`.`id_order` AS `id_order`,
+    `view_nilai_masak`.`tgl` AS `tgl`,
+    `view_nilai_masak`.`no_order` AS `no_order`,
+    `view_nilai_masak`.`id_harga` AS `id_harga`,
+    `view_nilai_masak`.`id_lokasi` AS `id_lokasi`,
+    `view_nilai_masak`.`id_distribusi` AS `id_distribusi`,
+    `view_nilai_masak`.`qty` AS `qty`,
+    `view_nilai_masak`.`id_koki2` AS `koki`,
+    `view_nilai_masak`.`lama_masak` AS `lama_masak`,
+    `view_nilai_masak`.`nilai_koki` AS `nilai_koki`,
+    `view_nilai_masak`.`jml_koki` AS `jml_koki`,
+    'koki2' AS `ket`
+FROM
+    `resto`.`view_nilai_masak`
+WHERE
+    `view_nilai_masak`.`id_koki2` > 0
+UNION ALL
+SELECT
+    `view_nilai_masak`.`id_order` AS `id_order`,
+    `view_nilai_masak`.`tgl` AS `tgl`,
+    `view_nilai_masak`.`no_order` AS `no_order`,
+    `view_nilai_masak`.`id_harga` AS `id_harga`,
+    `view_nilai_masak`.`id_lokasi` AS `id_lokasi`,
+    `view_nilai_masak`.`id_distribusi` AS `id_distribusi`,
+    `view_nilai_masak`.`qty` AS `qty`,
+    `view_nilai_masak`.`id_koki3` AS `koki`,
+    `view_nilai_masak`.`lama_masak` AS `lama_masak`,
+    `view_nilai_masak`.`nilai_koki` AS `nilai_koki`,
+    `view_nilai_masak`.`jml_koki` AS `jml_koki`,
+    'koki3' AS `ket`
+FROM
+    `resto`.`view_nilai_masak`
+WHERE
+    `view_nilai_masak`.`id_koki3` > 0
+) `koki_masak`
+ORDER BY
+    `koki_masak`.`id_order`,
+    `koki_masak`.`ket`
+
+
+view_summary_save : 
+SELECT
+    `a`.`id_order` AS `id_order`,
+    `a`.`tgl` AS `tgl`,
+    `a`.`no_order` AS `no_order`,
+    `a`.`admin` AS `admin`,
+    `a`.`id_koki1` AS `id_koki1`,
+    `a`.`id_koki2` AS `id_koki2`,
+    `a`.`id_koki3` AS `id_koki3`,
+    `b`.`no_order2` AS `no_order2`,
+    IF(`b`.`voucher` = '0', 'T', 'Y') AS `vouceher`,
+    SUM(`a`.`harga`) AS `hrg`,
+    `b`.`voucher` AS `voucher`
+FROM
+    (
+        `resto`.`tb_order` `a`
+    LEFT JOIN(
+        SELECT
+            `b`.`no_order` AS `no_order`,
+            `b`.`no_order2` AS `no_order2`,
+            `c`.`voucher` AS `voucher`
+        FROM
+            (
+                `resto`.`tb_order2` `b`
+            LEFT JOIN `resto`.`tb_transaksi` `c`
+            ON
+                (`c`.`no_order` = `b`.`no_order2`)
+            )
+        GROUP BY
+            `b`.`no_order`
+    ) `b`
+ON
+    (`b`.`no_order` = `a`.`no_order`)
+    )
+WHERE
+    `a`.`id_distribusi` <> '2'
+GROUP BY
+    `a`.`no_order`,
+    `a`.`admin`
+
+
+view_waktu : 
+SELECT
+    `b`.`nm_menu` AS `nm_menu`,
+    `c`.`nm_meja` AS `nm_meja`,
+    `a`.`id_order` AS `id_order`,
+    `a`.`no_order` AS `no_order`,
+    `a`.`id_harga` AS `id_harga`,
+    `a`.`qty` AS `qty`,
+    `a`.`harga` AS `harga`,
+    `a`.`request` AS `request`,
+    `a`.`tambahan` AS `tambahan`,
+    `a`.`page` AS `page`,
+    `a`.`id_meja` AS `id_meja`,
+    `a`.`selesai` AS `selesai`,
+    `a`.`id_lokasi` AS `id_lokasi`,
+    `a`.`pengantar` AS `pengantar`,
+    `a`.`tgl` AS `tgl`,
+    `a`.`admin` AS `admin`,
+    `a`.`void` AS `void`,
+    `a`.`round` AS `round`,
+    `a`.`alasan` AS `alasan`,
+    `a`.`nm_void` AS `nm_void`,
+    `a`.`j_mulai` AS `j_mulai`,
+    `a`.`j_selesai` AS `j_selesai`,
+    `a`.`diskon` AS `diskon`,
+    `a`.`wait` AS `wait`,
+    `a`.`aktif` AS `aktif`,
+    `a`.`id_koki1` AS `id_koki1`,
+    `a`.`id_koki2` AS `id_koki2`,
+    `a`.`id_koki3` AS `id_koki3`,
+    `a`.`ongkir` AS `ongkir`,
+    `a`.`id_distribusi` AS `id_distribusi`,
+    `a`.`orang` AS `orang`,
+    `a`.`no_checker` AS `no_checker`,
+    `a`.`print` AS `print`,
+    `a`.`copy_print` AS `copy_print`,
+    `a`.`created_at` AS `created_at`,
+    `a`.`updated_at` AS `updated_at`,
+    TIMESTAMPDIFF(MINUTE, `a`.`j_mulai`, `a`.`j_selesai`) AS `selisih`,
+    TIMESTAMPDIFF(MINUTE, `a`.`j_selesai`, `a`.`wait`) AS `wait_2`
+FROM
+    (
+        (
+            `resto`.`tb_order` `a`
+        LEFT JOIN `resto`.`view_menu` `b`
+        ON
+            (`b`.`id_harga` = `a`.`id_harga`)
+        )
+    LEFT JOIN `resto`.`tb_meja` `c`
+    ON
+        (`c`.`id_meja` = `a`.`id_meja`)
+    )
+WHERE
+    `a`.`selesai` = 'selesai' AND `a`.`aktif` = '1' AND `a`.`void` = 0

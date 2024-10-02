@@ -1,0 +1,69 @@
+create view view_koki_masak as
+
+SELECT
+    `tb_order`.`id_order` AS `id_order`,
+    `tb_order`.`tgl` AS `tgl`,
+    `tb_lokasi`.`id_lokasi` AS `id_lokasi`,
+    `tb_lokasi`.`nm_lokasi` AS `nm_lokasi`,
+    `tb_distribusi`.`nm_distribusi` AS `nm_distribusi`,
+    `tb_order`.`no_order` AS `no_order`,
+    `view_menu`.`nm_menu` AS `nm_menu`,
+    `tb_order`.`qty` AS `qty`,
+    `a`.`nama` AS `koki1`,
+    `b`.`nama` AS `koki2`,
+    `c`.`nama` AS `koki3`,
+    MINUTE(
+        TIMEDIFF(
+            `tb_order`.`j_mulai`,
+            `tb_order`.`j_selesai`
+        )
+    ) AS `menit`,
+    MINUTE(
+        TIMEDIFF(
+            `tb_order`.`j_mulai`,
+            `tb_order`.`j_selesai`
+        )
+    ) / `tb_order`.`qty` AS `menit_bagi`
+FROM
+    (
+        (
+            (
+                (
+                    (
+                        (
+                            `tb_order`
+                        LEFT JOIN `tb_lokasi` ON
+                            (
+                                `tb_order`.`id_lokasi` = `tb_lokasi`.`id_lokasi`
+                            )
+                        )
+                    LEFT JOIN `view_menu` ON
+                        (
+                            `tb_order`.`id_harga` = `view_menu`.`id_harga`
+                        )
+                    )
+                LEFT JOIN `tb_distribusi` ON
+                    (
+                        `tb_order`.`id_distribusi` = `tb_distribusi`.`id_distribusi`
+                    )
+                )
+            LEFT JOIN `tb_karyawan` `a`
+            ON
+                (
+                    `tb_order`.`id_koki1` = `a`.`id_karyawan`
+                )
+            )
+        LEFT JOIN `tb_karyawan` `b`
+        ON
+            (
+                `tb_order`.`id_koki2` = `b`.`id_karyawan`
+            )
+        )
+    LEFT JOIN `tb_karyawan` `c`
+    ON
+        (
+            `tb_order`.`id_koki3` = `c`.`id_karyawan`
+        )
+    )
+WHERE
+    `tb_order`.`aktif` = 2 AND `tb_order`.`void` = 0
